@@ -19,25 +19,27 @@ class NeuroVaultImageMetadata(BaseNeuroVaultMetadata, metadata.BaseFileMetadata)
 
     @property
     def path(self):
-        return '/images/{0}'.format(self.raw['id'])
+        return self.build_path(self.raw['id'])
+
+    @property
+    def materialized_path(self):
+        return self.build_path(self.raw['title'])
 
     @property
     def name(self):
-        return self.raw['name']
+        return self.raw['title']
 
-    # Note: Need to add next 3 fields to the NV Image model, or rewrite to
-    # extract from the file itself.
     @property
     def size(self):
         return self.raw['bytes']
 
     @property
     def modified(self):
-        return self.raw['modified']
+        return self.raw['modify_date']
 
     @property
     def content_type(self):
-        return self.raw['mime_type']
+        return self.raw['content_type']
 
     @property
     def id(self):
@@ -79,7 +81,15 @@ class NeuroVaultCollectionMetadata(BaseNeuroVaultMetadata, metadata.BaseMetadata
 
     @property
     def path(self):
-        return '/collections/{0}'.format(self.raw['id'])
+        return self.build_path(self.raw['id'])
+
+    @property
+    def materialized_path(self):
+        return self.build_path(self.raw['title'])
+
+    @property
+    def modified(self):
+        return self.raw['modify_date']
 
     @property
     def id(self):
