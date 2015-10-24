@@ -14,15 +14,37 @@ class NeuroVaultImageMetadata(BaseNeuroVaultMetadata, metadata.BaseFileMetadata)
         super().__init__(raw)
 
     @property
-    def id(self):
-        return self.raw['id']
+    def kind(self):
+        return 'file'
+
+    @property
+    def path(self):
+        return '/images/{0}'.format(self.raw['id'])
 
     @property
     def name(self):
         return self.raw['name']
 
+    # Note: Need to add next 3 fields to the NV Image model, or rewrite to
+    # extract from the file itself.
     @property
-    def path(self):
+    def size(self):
+        return self.raw['bytes']
+
+    @property
+    def modified(self):
+        return self.raw['modified']
+
+    @property
+    def content_type(self):
+        return self.raw['mime_type']
+
+    @property
+    def id(self):
+        return self.raw['id']
+
+    @property
+    def file(self):
         return self.raw['file']
 
     @property
@@ -50,6 +72,14 @@ class NeuroVaultCollectionMetadata(BaseNeuroVaultMetadata, metadata.BaseMetadata
 
     def __init__(self, raw):
         super().__init__(raw)
+
+    @property
+    def kind(self):
+        return 'folder'
+
+    @property
+    def path(self):
+        return '/collections/{0}'.format(self.raw['id'])
 
     @property
     def id(self):
