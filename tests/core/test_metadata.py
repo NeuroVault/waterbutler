@@ -1,11 +1,6 @@
-import pytest
 import hashlib
 
 from tests import utils
-from unittest import mock
-from tests.utils import async
-from waterbutler.core import metadata
-from waterbutler.core import exceptions
 
 
 class TestBaseMetadata:
@@ -13,14 +8,14 @@ class TestBaseMetadata:
     def test_file_metadata(self):
         file_metadata = utils.MockFileMetadata()
 
-        assert file_metadata.is_file == True
-        assert file_metadata.is_folder == False
+        assert file_metadata.is_file is True
+        assert file_metadata.is_folder is False
 
     def test_folder_metadata(self):
         folder_metadata = utils.MockFolderMetadata()
 
-        assert folder_metadata.is_folder == True
-        assert folder_metadata.is_file == False
+        assert folder_metadata.is_file is False
+        assert folder_metadata.is_folder is True
 
     def test_file_json_api_serialize(self):
         file_metadata = utils.MockFileMetadata()
@@ -41,6 +36,7 @@ class TestBaseMetadata:
             'contentType': 'application/octet-stream',
             'modified': 'never',
             'size': 1337,
+            'resource': 'n0d3z',
         }
         assert 'new_folder' not in serialized['links']
         assert serialized['links']['move'].endswith(link_suffix)
@@ -65,14 +61,15 @@ class TestBaseMetadata:
             'materialized': '/Bar/',
             'etag': etag,
             'size': None,
+            'resource': 'n0d3z',
         }
         assert serialized['links']['new_folder'].endswith(link_suffix + '?kind=folder')
         assert serialized['links']['move'].endswith(link_suffix)
-        assert serialized['links']['upload'].endswith(link_suffix + '?kind=folder')
+        assert serialized['links']['upload'].endswith(link_suffix + '?kind=file')
         assert 'download' not in serialized['links']
         assert serialized['links']['delete'].endswith(link_suffix)
 
-    def test_folder_json_api_serialize(self):
+    def test_folder_json_api_size_serialize(self):
         folder_metadata = utils.MockFolderMetadata()
         folder_metadata.children = [utils.MockFileMetadata()]
         serialized = folder_metadata.json_api_serialized('n0d3z')
